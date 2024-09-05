@@ -10,7 +10,20 @@ auth_service = AuthService(db_path="app/users.db")
 def home():
     # Fetch all users from the service
     users = auth_service.get_all_users()
-    return render_template('home.html', users=users)
+
+    # Extract usernames
+    usernames = [user['username'] for user in users]
+
+    # Print usernames (this will be shown in the server logs, not the response)
+    for username in usernames:
+        print(username)
+
+    # Return the usernames as a JSON response
+    return jsonify(usernames)
+# @app.route('/')
+# def home():
+#     users = ['Alice', 'Bob', 'Charlie']
+#     return render_template('home.html', users=users)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
