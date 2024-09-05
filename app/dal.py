@@ -32,5 +32,12 @@ class UserDAL:
             return {'username': row[0], 'password': row[1]}
         return None
 
+    def get_all_users(self):
+        if not self.conn:
+            return None
+        self.cursor.execute("SELECT username FROM users")
+        rows = self.cursor.fetchall()
+        return [{'username': row[0]} for row in rows] if rows else None
+
 
 

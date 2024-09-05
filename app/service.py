@@ -30,6 +30,14 @@ class AuthService:
 
         return False, "User not found."
 
+    def get_all_users(self):
+        # Return all users from the database or fallback to hardcoded users
+        users = self.dal.get_all_users()
+        if not users:
+            # If no users in the database, return hardcoded users
+            users = [{'username': user.username} for user in self.hardcoded_users]
+        return users
+
 
 
     def get_db(self):
