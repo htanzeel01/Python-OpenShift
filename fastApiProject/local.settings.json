@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "dbkey": "rpQYIzEkNb2lyyHpQDEDy2NkGfUvpR1h1o9FvnQ5AYKNdz2xwQtHMRRfCKSw0rOUfgaa2OEAn9C1ACDbypMhzA==",
+    "DBURI": "https://drinkapp.documents.azure.com:443/",
+    "DBName": "DrinkAppDB",
+    "SENDGRID_API_KEY": "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",
+    "SENDER_ADDRESS": "omiringomr21@gmail.com"
+  },
+"JwtSettings": {
+    "ALGORITHM": "HS256",
+    "Key": "devKey development",
+    "Issuer": "DrinkAppRecipes.azurewebsites.net",
+    "Audience": "DrinkAppUsers / Patients / Caregivers / Admins"
+}
+
+}
