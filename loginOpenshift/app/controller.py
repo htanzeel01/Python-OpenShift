@@ -8,9 +8,14 @@ auth_service = AuthService(db_path="app/users.db")
 
 @app.route('/')
 def home():
-    # Fetch all users from the service
-    users = auth_service.get_all_users()
-    return render_template('home.html', users=users)
+    users = auth_service.get_all_users()  # Fetch all users from the service
+    print(f"Fetched users: {users}")  # Debugging: print the fetched users
+    if users is None:  # Handle the case when users is None
+        return jsonify(message="No users found"), 404
+    usernames = [user['username'] for user in users]
+    return jsonify(usernames=usernames)
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

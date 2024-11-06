@@ -1,35 +1,49 @@
-import sqlite3
+import mysql.connector
+from mysql.connector import Error
 
 class UserDAL:
-    def __init__(self, db_path=":memory:"):
-        self.db_path = db_path
+    def __init__(self, host='localhost', user='root', password='sql321', database='python-test'):
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.conn = None
+        self.cursor = None
 
     def connect(self):
         try:
-            # Add check_same_thread=False to allow using this connection across threads
-            self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
-            self.cursor = self.conn.cursor()
-            self.create_table()
-        except sqlite3.Error as e:
+            # Establish connection to MySQL database
+            self.conn = mysql.connector.connect(
+                host=self.host,
+                user=self.user,
+                password=self.password,
+                database=self.database
+            )
+            if self.conn.is_connected():
+                print("Connected to MySQL database")
+                self.cursor = self.conn.cursor(dictionary=True)
+                self.create_table()
+        except Error as e:
             print(f"Database connection failed: {e}")
             self.conn = None
 
     def create_table(self):
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                username TEXT PRIMARY KEY,
-                password TEXT
-            )
-        """)
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS users (
+            username VARCHAR(255) PRIMARY KEY,
+            password VARCHAR(255)
+        )
+        """
+        self.cursor.execute(create_table_query)
         self.conn.commit()
 
     def get_user(self, username):
         if not self.conn:
             return None
-        self.cursor.execute("SELECT username, password FROM users WHERE username = ?", (username,))
+        self.cursor.execute("SELECT username, password FROM users WHERE username = %s", (username,))
         row = self.cursor.fetchone()
         if row:
-            return {'username': row[0], 'password': row[1]}
+            return {'username': row['username'], 'password': row['password']}
         return None
 
     def get_all_users(self):
@@ -37,7 +51,14 @@ class UserDAL:
             return None
         self.cursor.execute("SELECT username FROM users")
         rows = self.cursor.fetchall()
-        return [{'username': row[0]} for row in rows] if rows else None
+        return [{'username': row['username']} for row in rows] if rows else None
 
-
-
+    def add_user(self, username, password):
+        if not self.conn:
+            return None
+        try:
+            self.cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+            self.conn.commit()
+            print(f"User {username} added successfully.")
+        except Error as e:
+            print(f"Failed to add user: {e}")
